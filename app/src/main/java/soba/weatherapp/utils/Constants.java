@@ -32,4 +32,10 @@ public final class Constants {
     public static final String PREF_CITY_DEFAULT = mContext.getString(R.string.pref_default_city);
     public static final String PREF_COUNTRY_DEFAULT = mContext.getString(R.string.pref_default_country);
     public static final String PREF_UNIT_SUMMARY = mContext.getString(R.string.pref_temperature_summary);
+
+    public static final String DETAIL_LABEL_HUMIDITY = "%";
+    public static final String DETAIL_LABEL_PRESSURE = " hPa";
+    public static final String DETAIL_LABEL_WIND_METRIC = " m/s";
+    public static final String DETAIL_LABEL_WIND_IMP = " mph";
+
 }

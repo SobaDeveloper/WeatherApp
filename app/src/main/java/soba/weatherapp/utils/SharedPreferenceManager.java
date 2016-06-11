@@ -67,6 +67,11 @@ public class SharedPreferenceManager {
         return getCity() + "," + WeatherUtil.getCountry(getCountry());
     }
 
+    public String getWindSpeedUnit(){
+        return isUnitMetric() ? Constants.DETAIL_LABEL_WIND_METRIC :
+                Constants.DETAIL_LABEL_WIND_IMP;
+    }
+
     public String getTempUnit(){
         return isUnitMetric() ? Constants.API_METRIC : Constants.API_IMPERIAL;
     }

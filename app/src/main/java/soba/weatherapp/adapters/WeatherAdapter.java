@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import soba.weatherapp.R;
 import soba.weatherapp.network.models.weathermodel.WeatherData;
+import soba.weatherapp.utils.Constants;
 import soba.weatherapp.utils.SharedPreferenceManager;
 import soba.weatherapp.utils.WeatherUtil;
 import soba.weatherapp.views.WeatherDetailLayout;
@@ -85,19 +86,20 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.ViewHold
 
         if (mWeatherData.getMain().getHumidity() != null) {
             WeatherDetailLayout humidityDetail = createDetailLayout(WeatherUtil.getHumidityIcon(),
-                    "Humidity", String.valueOf(mWeatherData.getMain().getHumidity()) + "%");
+                    "Humidity", String.valueOf(mWeatherData.getMain().getHumidity()) + Constants.DETAIL_LABEL_HUMIDITY);
             holder.llDetails.addView(humidityDetail);
         }
 
         if (mWeatherData.getMain().getPressure() != null) {
             WeatherDetailLayout pressureDetail = createDetailLayout(WeatherUtil.getPressureIcon(),
-                    "Pressure", String.valueOf(mWeatherData.getMain().getPressure()));
+                    "Pressure", String.valueOf(mWeatherData.getMain().getPressure())
+                            + Constants.DETAIL_LABEL_PRESSURE);
             holder.llDetails.addView(pressureDetail);
         }
 
         if (mWeatherData.getWind().getSpeed() != null) {
             WeatherDetailLayout windDetail = createDetailLayout(WeatherUtil.getWindIcon(),
-                    "Wind", String.valueOf(mWeatherData.getWind().getSpeed()));
+                    "Wind", String.valueOf(mWeatherData.getWind().getSpeed()) + prefs.getWindSpeedUnit());
             holder.llDetails.addView(windDetail);
         }
 

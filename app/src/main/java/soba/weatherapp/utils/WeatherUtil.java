@@ -2,8 +2,6 @@ package soba.weatherapp.utils;
 
 import android.content.Context;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,35 +23,6 @@ public final class WeatherUtil {
     private WeatherUtil() {
     }
 
-    public static String getCurrentDate() {
-        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
-        Date date = new Date();
-        return dateFormat.format(date);
-    }
-
-    /**
-     * Get formatted date for the forecast display
-     */
-    public static String getFormattedDate(Date date) {
-        return new SimpleDateFormat("MM/dd", Locale.getDefault()).format(date);
-    }
-
-    /**
-     * Get date from String
-     */
-    public static Date getDate(Integer date) {
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        Date parsedDate = new Date();
-        try {
-            parsedDate = dateFormat.parse(date.toString());
-        }
-        catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return parsedDate;
-    }
-
     /**
      * Get day of the week for the forecast display
      */
@@ -68,7 +37,7 @@ public final class WeatherUtil {
         return dateFormat.format(c.getTime());
     }
 
-    public static String getDate2(Integer timestamp) {
+    public static String getDate(Integer timestamp) {
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(timestamp * 1000L);
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd", Locale.getDefault());
@@ -80,7 +49,7 @@ public final class WeatherUtil {
      */
     public static String getTime(Integer unixSeconds) {
         Date date = new Date(unixSeconds * 1000L);
-        SimpleDateFormat sdf = new SimpleDateFormat("h:mm", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getDefault());
         return sdf.format(date);
     }

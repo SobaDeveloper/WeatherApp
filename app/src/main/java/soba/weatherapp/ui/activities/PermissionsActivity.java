@@ -18,11 +18,9 @@ import java.util.List;
 public abstract class PermissionsActivity extends AppCompatActivity {
 
     private static final String TAG = PermissionsActivity.class.getSimpleName();
-    private static int SPLASH_TIMER = 1500;
     protected static final int REQUEST_PERMISSIONS = 1;
     protected static List<String> permissionList;
     private static String[] PERMISSIONS_STRINGS;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
