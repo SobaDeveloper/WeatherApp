@@ -1,0 +1,53 @@
+<resources>
+    <string name="app_name">Weather App</string>
+    <string name="action_settings">Settings</string>
+
+    //Tabs
+    <string name="tab_current">Current</string>
+    <string name="tab_forecast">Forecast</string>
+
+    //Weather Icons
+    <string name="weather_sunny">&#xf00d;</string>
+    <string name="weather_clear_night">&#xf02e;</string>
+    <string name="weather_foggy">&#xf014;</string>
+    <string name="weather_cloudy">&#xf013;</string>
+    <string name="weather_rainy">&#xf019;</string>
+    <string name="weather_snowy">&#xf01b;</string>
+    <string name="weather_thunder">&#xf01e;</string>
+    <string name="weather_drizzle">&#xf01c;</string>
+
+    //Weather Degrees
+    <string name="weather_degrees_f">&#xf045;</string>
+    <string name="weather_degrees_c">&#xf03c;</string>
+
+    //Weather details
+    <string name="weather_humidity">&#xf07a;</string>
+    <string name="weather_barometer">&#xf079;</string>
+    <string name="weather_wind">&#xf050;</string>
+    <string name="weather_sunrise">&#xf051;</string>
+    <string name="weather_sunset">&#xf052;</string>
+
+    //Weather units
+    <string name="weather_unit_metric">°C</string>
+    <string name="weather_unit_imp">°F</string>
+
+    //Preferences
+    <string name="pref_key_location_toggle">key_location_toggle</string>
+    <string name="pref_key_city">key_city</string>
+    <string name="pref_key_country">key_country</string>
+    <string name="pref_key_unit">key_unit</string>
+
+    <string name="pref_category_location">Location</string>
+    <string name="pref_title_location_toggle">Use Location</string>
+    <string name="pref_title_city">City Name</string>
+    <string name="pref_summary_city_null">Please provide your city name</string>
+    <string name="pref_default_city">Los Angeles</string>
+    <string name="pref_title_country">Country Name</string>
+    <string name="pref_default_country">United States</string>
+    <string name="pref_country_dialog_title">Select Country</string>
+
+    <string name="pref_category_unit">Unit of Measure</string>
+    <string name="pref_title_temperature">Temperature</string>
+    <string name="pref_temperature_summary">Current Unit:</string>
+
+</resources>

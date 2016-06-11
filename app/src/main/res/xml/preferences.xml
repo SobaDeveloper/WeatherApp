@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/pref_category_location">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key_location_toggle"
+            android:title="@string/pref_title_location_toggle"
+            android:disableDependentsState="true"
+            />
+
+        <EditTextPreference
+            android:defaultValue="Los Angeles"
+            android:dependency="@string/pref_key_location_toggle"
+            android:key="@string/pref_key_city"
+            android:summary="@string/pref_summary_city_null"
+            android:title="@string/pref_title_city"
+            android:inputType="textCapWords"
+            />
+
+        <ListPreference
+            android:defaultValue="United States"
+            android:dependency="@string/pref_key_location_toggle"
+            android:dialogTitle="@string/pref_country_dialog_title"
+            android:entries="@array/pref_countries_array"
+            android:entryValues="@array/pref_countries_array"
+            android:key="@string/pref_key_country"
+            android:summary="United States"
+            android:title="@string/pref_title_country"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_unit">
+
+        <ListPreference
+            android:defaultValue="f"
+            android:entries="@array/pref_entries_unit_names"
+            android:entryValues="@array/pref_entryvalues_unit_values"
+            android:key="@string/pref_key_unit"
+            android:title="@string/pref_title_temperature"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>
