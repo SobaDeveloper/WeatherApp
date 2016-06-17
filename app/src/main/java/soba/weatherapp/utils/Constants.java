@@ -13,9 +13,10 @@ public final class Constants {
     private static Context mContext = WeatherApp.getContext();
 
     public static final String API_KEY = "523dcb17e6b92527d1ed9df5d4533d46";
+    public static final String API_APP_ID = "appid=" + API_KEY;
     public static final String API_BASE_URL = "http://api.openweathermap.org/data/2.5/";
-    public static final String API_WEATHER = "weather";
-    public static final String API_FORECAST = "forecast/daily";
+    public static final String API_WEATHER = "weather?";
+    public static final String API_FORECAST = "forecast/daily?";
     public static final String API_IMPERIAL = "imperial";
     public static final String API_METRIC = "metric";
 

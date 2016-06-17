@@ -12,27 +12,21 @@ import soba.weatherapp.utils.Constants;
  */
 public interface ApiInterface {
 
-    @GET(Constants.API_WEATHER)
+    @GET(Constants.API_WEATHER + Constants.API_APP_ID)
     Observable<WeatherData> getWeatherByCity(@Query("q") String cityName,
-                                             @Query("units") String units,
-                                             @Query("appid") String appId);
+                                             @Query("units") String units);
 
-    @GET(Constants.API_FORECAST)
+    @GET(Constants.API_FORECAST + Constants.API_APP_ID)
     Observable<ForecastData> getForecastByCity(@Query("q") String cityName,
-                                               @Query("cnt") int count,
-                                               @Query("units") String units,
-                                               @Query("appid") String appId);
+                                               @Query("units") String units);
 
-    @GET(Constants.API_WEATHER)
+    @GET(Constants.API_WEATHER + Constants.API_APP_ID)
     Observable<WeatherData> getWeatherByLocation(@Query("lat") String lat,
                                                  @Query("lon") String lon,
-                                                 @Query("units") String units,
-                                                 @Query("appid") String appId);
+                                                 @Query("units") String units);
 
-    @GET(Constants.API_FORECAST)
+    @GET(Constants.API_FORECAST + Constants.API_APP_ID)
     Observable<ForecastData> getForecastByLocation(@Query("lat") String lat,
                                                    @Query("lon") String lon,
-                                                   @Query("cnt") int count,
-                                                   @Query("units") String units,
-                                                   @Query("appid") String appId);
+                                                   @Query("units") String units);
 }

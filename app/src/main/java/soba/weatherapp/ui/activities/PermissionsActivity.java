@@ -1,6 +1,7 @@
 package soba.weatherapp.ui.activities;
 
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -12,6 +13,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import soba.weatherapp.utils.SharedPreferenceManager;
+
 /**
  * Created by SobaDeveloper on 6/4/16.
  */
@@ -21,10 +24,12 @@ public abstract class PermissionsActivity extends AppCompatActivity {
     protected static final int REQUEST_PERMISSIONS = 1;
     protected static List<String> permissionList;
     private static String[] PERMISSIONS_STRINGS;
+    protected SharedPreferenceManager prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        prefs = SharedPreferenceManager.from(this);
         addPermissions();
         initPermissionsIfNecessary();
     }
@@ -33,13 +38,15 @@ public abstract class PermissionsActivity extends AppCompatActivity {
 
     private void initPermissionsIfNecessary() {
         Log.i(TAG, "initPermissionsIfNecessary");
-        if (permissionList != null && permissionList.size() > 0) {
-            Log.i(TAG, "initPermissionsIfNecessary, permissionList is NOT NULL");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && permissionList != null &&
+                permissionList.size() > 0) {
+            Log.i(TAG, "Permissions required to be checked.");
             PERMISSIONS_STRINGS = new String[permissionList.size()];
             PERMISSIONS_STRINGS = permissionList.toArray(PERMISSIONS_STRINGS);
             checkPermissions();
         }
-        else{
+        else {
+            Log.i(TAG, "Permissions not required");
             startNextActivity();
         }
     }
@@ -49,7 +56,7 @@ public abstract class PermissionsActivity extends AppCompatActivity {
             Log.i(TAG, "Permissions have NOT been granted. Requesting permissions.");
             requestPermissions();
         }
-        else {
+        else{
             startNextActivity();
         }
     }
@@ -70,18 +77,16 @@ public abstract class PermissionsActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_PERMISSIONS) {
-            Log.i(TAG, "Received response for Location permission request.");
-            // We have requested multiple permissions for location, so all of them need to be checked
+            Log.i(TAG, "Received response for permissions request.");
             if (verifyPermissions(grantResults)) {
-                // All required permissions have been granted, start main activity.
-                Toast.makeText(this, "Permission GRANTED", Toast.LENGTH_LONG).show();
-                startNextActivity();
+                Log.i(TAG, "All required permissions have been granted.");
             }
             else {
-                Log.i(TAG, "Location permissions were NOT granted.");
-                Toast.makeText(this, "Permission NOT granted", Toast.LENGTH_LONG).show();
-                finish();
+                Log.i(TAG, "Required permissions NOT granted.");
+                Toast.makeText(this, "Required permissions not granted!", Toast.LENGTH_LONG).show();
+                prefs.setLocationToggle(false);
             }
+            startNextActivity();
         }
         else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);

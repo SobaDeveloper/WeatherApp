@@ -15,6 +15,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func2;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 import soba.weatherapp.R;
 import soba.weatherapp.adapters.ViewPagerAdapter;
 import soba.weatherapp.location.LocationProvider;
@@ -25,7 +26,6 @@ import soba.weatherapp.network.models.weathermodel.WeatherData;
 import soba.weatherapp.ui.fragments.ForecastFragment;
 import soba.weatherapp.ui.fragments.SettingsFragment;
 import soba.weatherapp.ui.fragments.WeatherFragment;
-import soba.weatherapp.utils.Constants;
 import soba.weatherapp.utils.SharedPreferenceManager;
 
 /**
@@ -42,11 +42,13 @@ public class MainActivity extends BaseActivity implements LocationProvider.Custo
     private Location mLocation;
     private ProgressBar mProgressBar;
     private String mTempUnit = "";
+    private CompositeSubscription mCompositeSubscription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mCompositeSubscription = new CompositeSubscription();
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         initUi();
         initPrefs();
@@ -127,30 +129,32 @@ public class MainActivity extends BaseActivity implements LocationProvider.Custo
                     }
                 });
 
-        combined.subscribe(new Subscriber<CombinedData>() {
-            @Override
-            public void onCompleted() {
-            }
+        mCompositeSubscription.add(combined
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<CombinedData>() {
+                    @Override
+                    public void onCompleted() {
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-                hideProgressBar();
-            }
+                    @Override
+                    public void onError(Throwable e) {
+                        hideProgressBar();
+                    }
 
-            @Override
-            public void onNext(CombinedData combinedData) {
-                updateFragments(combinedData);
-                mViewPager.setVisibility(View.VISIBLE);
-                hideProgressBar();
-            }
-        });
+                    @Override
+                    public void onNext(CombinedData combinedData) {
+                        updateFragments(combinedData);
+                        mViewPager.setVisibility(View.VISIBLE);
+                        hideProgressBar();
+                    }
+                }));
     }
 
     private void getCombinedDataByCity() {
         showProgressBar();
         if (prefs != null) {
             String selectedCity = prefs.getSelectedCity();
-            Observable<CombinedData> combined = Observable.zip(getWeatherByCity(selectedCity),
+            Observable<CombinedData> combined2 = Observable.zip(getWeatherByCity(selectedCity),
                     getForecastByCity(selectedCity), new Func2<WeatherData, ForecastData, CombinedData>() {
                         @Override
                         public CombinedData call(WeatherData weatherData, ForecastData forecastData) {
@@ -158,52 +162,48 @@ public class MainActivity extends BaseActivity implements LocationProvider.Custo
                         }
                     });
 
-            combined.subscribe(new Subscriber<CombinedData>() {
-                @Override
-                public void onCompleted() {
-                }
+            mCompositeSubscription.add(combined2
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<CombinedData>() {
+                        @Override
+                        public void onCompleted() {
 
-                @Override
-                public void onError(Throwable e) {
-                    hideProgressBar();
-                }
+                        }
 
-                @Override
-                public void onNext(CombinedData combinedData) {
-                    updateFragments(combinedData);
-                    mViewPager.setVisibility(View.VISIBLE);
-                    hideProgressBar();
-                }
-            });
+                        @Override
+                        public void onError(Throwable e) {
+                            hideProgressBar();
+                        }
+
+                        @Override
+                        public void onNext(CombinedData combinedData) {
+                            updateFragments(combinedData);
+                            mViewPager.setVisibility(View.VISIBLE);
+                            hideProgressBar();
+                        }
+                    }));
         }
     }
 
     private Observable<WeatherData> getWeatherByLocation() {
         return ApiClient.getApi()
                 .getWeatherByLocation(String.valueOf(mLocation.getLatitude()), String.valueOf(mLocation.getLongitude()),
-                        mTempUnit, Constants.API_KEY)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread());
+                        mTempUnit);
     }
 
     private Observable<ForecastData> getForecastByLocation() {
         return ApiClient.getApi()
                 .getForecastByLocation(String.valueOf(mLocation.getLatitude()), String.valueOf(mLocation.getLongitude()),
-                        7, mTempUnit, Constants.API_KEY)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread());
+                        mTempUnit);
     }
 
     private Observable<WeatherData> getWeatherByCity(String selectedCity) {
-        return ApiClient.getApi().getWeatherByCity(selectedCity, mTempUnit, Constants.API_KEY)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread());
+        return ApiClient.getApi().getWeatherByCity(selectedCity, mTempUnit);
     }
 
     private Observable<ForecastData> getForecastByCity(String selectedCity) {
-        return ApiClient.getApi().getForecastByCity(selectedCity, 7, mTempUnit, Constants.API_KEY)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread());
+        return ApiClient.getApi().getForecastByCity(selectedCity, mTempUnit);
     }
 
     private void updateFragments(CombinedData combinedData) {
@@ -237,6 +237,12 @@ public class MainActivity extends BaseActivity implements LocationProvider.Custo
                 mLocationProvider.stopLocationUpdates();
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        mCompositeSubscription.unsubscribe();
+        super.onDestroy();
     }
 
     private void showProgressBar() {

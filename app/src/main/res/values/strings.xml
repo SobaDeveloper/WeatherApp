@@ -47,6 +47,7 @@
     <string name="pref_country_dialog_title">Select Country</string>
 
     <string name="pref_category_unit">Unit of Measure</string>
+    <string name="pref_default_unit">c</string>
     <string name="pref_title_temperature">Temperature</string>
     <string name="pref_temperature_summary">Current Unit:</string>
 
