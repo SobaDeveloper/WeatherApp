@@ -17,7 +17,7 @@
         >
 
         <activity
-            android:name="soba.weatherapp.ui.activities.SplashActivity"
+            android:name="soba.weatherapp.presentation.view.splash.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -27,11 +27,11 @@
         </activity>
 
         <activity
-            android:name="soba.weatherapp.ui.activities.MainActivity"
+            android:name="soba.weatherapp.presentation.view.main.MainActivity"
             android:label="@string/app_name">
         </activity>
 
-        <activity android:name="soba.weatherapp.ui.activities.SettingsActivity"/>
+        <activity android:name="soba.weatherapp.presentation.view.settings.SettingsActivity"/>
 
     </application>
 

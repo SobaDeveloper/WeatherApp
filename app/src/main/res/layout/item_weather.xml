@@ -34,7 +34,7 @@
             android:textStyle="italic"
             tools:text="Clear"/>
 
-        <soba.weatherapp.views.WeatherIconTextView
+        <soba.weatherapp.utils.views.WeatherIconTextView
             android:id="@+id/tv_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     >
 
-    <soba.weatherapp.views.WeatherIconTextView
+    <soba.weatherapp.utils.views.WeatherIconTextView
         android:id="@+id/tv_icon"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
