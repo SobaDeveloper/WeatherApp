@@ -9,13 +9,11 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
-
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func2;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 import soba.weatherapp.R;
 import soba.weatherapp.adapters.ViewPagerAdapter;
 import soba.weatherapp.location.LocationProvider;
@@ -42,25 +40,24 @@ public class MainActivity extends BaseActivity implements LocationProvider.Custo
     private Location mLocation;
     private ProgressBar mProgressBar;
     private String mTempUnit = "";
-    private CompositeSubscription mCompositeSubscription;
+    private CompositeDisposable disposable;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mCompositeSubscription = new CompositeSubscription();
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        disposable = new CompositeDisposable();
+        mProgressBar = findViewById(R.id.progressBar);
         initUi();
         initPrefs();
     }
 
     private void initUi() {
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        mViewPager = findViewById(R.id.viewpager);
         if (mViewPager != null) {
             setupViewPager(mViewPager);
         }
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = findViewById(R.id.tabs);
         if (tabLayout != null) {
             tabLayout.setupWithViewPager(mViewPager);
         }
@@ -83,20 +80,17 @@ public class MainActivity extends BaseActivity implements LocationProvider.Custo
             if (mLocationProvider == null) {
                 mLocationProvider = new LocationProvider(this, this);
             }
-        }
-        else {
+        } else {
             getCombinedDataByCity();
         }
     }
 
-    @Override
-    public void onLocationFetched(Location location) {
+    @Override public void onLocationFetched(Location location) {
         mLocation = new Location(location);
         getCombinedDataByLocation();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CHECK_SETTINGS) {
             switch (resultCode) {
                 case Activity.RESULT_OK:
@@ -109,8 +103,7 @@ public class MainActivity extends BaseActivity implements LocationProvider.Custo
                     prefs.setLocationToggle(false);
                     break;
             }
-        }
-        else if (requestCode == SETTINGS_ACTION) {
+        } else if (requestCode == SETTINGS_ACTION) {
             if (resultCode == SettingsFragment.PREFS_UPDATED) {
                 Log.i(TAG, "User made changes to preferences");
                 finish();
@@ -121,81 +114,65 @@ public class MainActivity extends BaseActivity implements LocationProvider.Custo
 
     private void getCombinedDataByLocation() {
         showProgressBar();
-        Observable<CombinedData> combined = Observable.zip(getWeatherByLocation(),
-                getForecastByLocation(), new Func2<WeatherData, ForecastData, CombinedData>() {
-                    @Override
-                    public CombinedData call(WeatherData weatherData, ForecastData forecastData) {
-                        return new CombinedData(weatherData, forecastData);
-                    }
-                });
+        Observable<CombinedData> combined =
+            Observable.zip(getWeatherByLocation(), getForecastByLocation(), CombinedData::new);
 
-        mCompositeSubscription.add(combined
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<CombinedData>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+        disposable.add(combined.subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(new DisposableObserver<CombinedData>() {
+                @Override public void onNext(CombinedData combinedData) {
+                    updateFragments(combinedData);
+                    mViewPager.setVisibility(View.VISIBLE);
+                    hideProgressBar();
+                }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        hideProgressBar();
-                    }
+                @Override public void onError(Throwable e) {
+                    hideProgressBar();
+                }
 
-                    @Override
-                    public void onNext(CombinedData combinedData) {
-                        updateFragments(combinedData);
-                        mViewPager.setVisibility(View.VISIBLE);
-                        hideProgressBar();
-                    }
-                }));
+                @Override public void onComplete() {
+                }
+            }));
     }
 
     private void getCombinedDataByCity() {
         showProgressBar();
         if (prefs != null) {
             String selectedCity = prefs.getSelectedCity();
-            Observable<CombinedData> combined2 = Observable.zip(getWeatherByCity(selectedCity),
-                    getForecastByCity(selectedCity), new Func2<WeatherData, ForecastData, CombinedData>() {
-                        @Override
-                        public CombinedData call(WeatherData weatherData, ForecastData forecastData) {
-                            return new CombinedData(weatherData, forecastData);
-                        }
-                    });
+            Observable<CombinedData> combined2 =
+                Observable.zip(getWeatherByCity(selectedCity), getForecastByCity(selectedCity),
+                    CombinedData::new);
 
-            mCompositeSubscription.add(combined2
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<CombinedData>() {
-                        @Override
-                        public void onCompleted() {
+            disposable.add(combined2.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<CombinedData>() {
+                    @Override public void onNext(CombinedData combinedData) {
+                        updateFragments(combinedData);
+                        mViewPager.setVisibility(View.VISIBLE);
+                        hideProgressBar();
+                    }
 
-                        }
+                    @Override public void onError(Throwable e) {
+                        hideProgressBar();
+                    }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            hideProgressBar();
-                        }
+                    @Override public void onComplete() {
 
-                        @Override
-                        public void onNext(CombinedData combinedData) {
-                            updateFragments(combinedData);
-                            mViewPager.setVisibility(View.VISIBLE);
-                            hideProgressBar();
-                        }
-                    }));
+                    }
+                }));
         }
     }
 
     private Observable<WeatherData> getWeatherByLocation() {
         return ApiClient.getApi()
-                .getWeatherByLocation(String.valueOf(mLocation.getLatitude()), String.valueOf(mLocation.getLongitude()),
-                        mTempUnit);
+            .getWeatherByLocation(String.valueOf(mLocation.getLatitude()),
+                String.valueOf(mLocation.getLongitude()), mTempUnit);
     }
 
     private Observable<ForecastData> getForecastByLocation() {
         return ApiClient.getApi()
-                .getForecastByLocation(String.valueOf(mLocation.getLatitude()), String.valueOf(mLocation.getLongitude()),
-                        mTempUnit);
+            .getForecastByLocation(String.valueOf(mLocation.getLatitude()),
+                String.valueOf(mLocation.getLongitude()), mTempUnit);
     }
 
     private Observable<WeatherData> getWeatherByCity(String selectedCity) {
@@ -207,30 +184,27 @@ public class MainActivity extends BaseActivity implements LocationProvider.Custo
     }
 
     private void updateFragments(CombinedData combinedData) {
-        ((WeatherFragment) mAdapter.getRegisteredFragment(0))
-                .updateData(combinedData.getWeatherData());
-        ((ForecastFragment) mAdapter.getRegisteredFragment(1))
-                .updateData(combinedData.getForecastData());
+        ((WeatherFragment) mAdapter.getRegisteredFragment(0)).updateData(
+            combinedData.getWeatherData());
+        ((ForecastFragment) mAdapter.getRegisteredFragment(1)).updateData(
+            combinedData.getForecastData());
     }
 
-    @Override
-    protected void onResume() {
+    @Override protected void onResume() {
         super.onResume();
         if (mLocationProvider != null) {
             mLocationProvider.connect();
         }
     }
 
-    @Override
-    protected void onStop() {
+    @Override protected void onStop() {
         super.onStop();
         if (mLocationProvider != null) {
             mLocationProvider.disconnect();
         }
     }
 
-    @Override
-    protected void onPause() {
+    @Override protected void onPause() {
         super.onPause();
         if (mLocationProvider != null) {
             if (mLocationProvider.isConnected()) {
@@ -239,9 +213,8 @@ public class MainActivity extends BaseActivity implements LocationProvider.Custo
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        mCompositeSubscription.unsubscribe();
+    @Override protected void onDestroy() {
+        disposable.dispose();
         super.onDestroy();
     }
 
