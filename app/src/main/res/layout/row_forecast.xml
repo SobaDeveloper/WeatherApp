@@ -15,7 +15,7 @@
         android:padding="@dimen/margin_material_half"
         >
 
-        <soba.weatherapp.views.WeatherIconTextView
+        <soba.weatherapp.utils.views.WeatherIconTextView
             android:id="@+id/tv_icon"
             style="@style/style_weathericon"
             android:layout_width="0dp"
