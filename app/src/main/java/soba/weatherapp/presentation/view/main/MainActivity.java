@@ -10,17 +10,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import javax.inject.Inject;
 import soba.weatherapp.R;
-import soba.weatherapp.presentation.adapters.ViewPagerAdapter;
 import soba.weatherapp.data.remote.repository.WeatherRepository;
-import soba.weatherapp.domain.schedulers.SchedulerProvider;
-import soba.weatherapp.utils.location.LocationProvider;
 import soba.weatherapp.domain.models.CombinedData;
+import soba.weatherapp.domain.schedulers.SchedulerProvider;
+import soba.weatherapp.presentation.adapters.ViewPagerAdapter;
 import soba.weatherapp.presentation.common.BaseActivity;
 import soba.weatherapp.presentation.view.settings.SettingsFragment;
-import soba.weatherapp.utils.SharedPreferenceManager;
+import soba.weatherapp.utils.PrefsManager;
+import soba.weatherapp.utils.location.LocationProvider;
 
 /**
  * Created by SobaDeveloper on 6/1/16
@@ -30,31 +29,34 @@ public class MainActivity extends BaseActivity
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_CHECK_SETTINGS = 0x1;
-    private ViewPagerAdapter mAdapter;
-    private SharedPreferenceManager prefs;
-    private LocationProvider mLocationProvider;
-    private Location mLocation;
-    private String mTempUnit = "";
+
+    @Inject SchedulerProvider schedulerProvider;
+    @Inject WeatherRepository weatherRepository;
 
     @BindView(R.id.viewpager) ViewPager mViewPager;
     @BindView(R.id.tabs) TabLayout tabLayout;
     @BindView(R.id.progressBar) ProgressBar mProgressBar;
 
-    @Inject SchedulerProvider schedulerProvider;
-    @Inject WeatherRepository weatherRepository;
+    private ViewPagerAdapter mAdapter;
+    private PrefsManager prefs;
+    private LocationProvider mLocationProvider;
+    private Location mLocation;
+    private String mTempUnit = "";
     private MainContract.Presenter mainPresenter;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         getMainComponent().inject(this);
-        ButterKnife.bind(this);
 
         initUi();
 
         initPresenter();
 
         initPrefs();
+    }
+
+    @Override protected int getLayoutId() {
+        return R.layout.activity_main;
     }
 
     private void initUi() {
@@ -69,7 +71,7 @@ public class MainActivity extends BaseActivity
     }
 
     private void initPrefs() {
-        prefs = SharedPreferenceManager.from(this);
+        prefs = PrefsManager.from(this);
         mTempUnit = prefs.getTempUnit();
         getLocationPrefs();
     }

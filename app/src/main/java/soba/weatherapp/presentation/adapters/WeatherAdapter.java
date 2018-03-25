@@ -11,7 +11,7 @@ import android.widget.TextView;
 import soba.weatherapp.R;
 import soba.weatherapp.domain.models.weathermodel.WeatherData;
 import soba.weatherapp.utils.Constants;
-import soba.weatherapp.utils.SharedPreferenceManager;
+import soba.weatherapp.utils.PrefsManager;
 import soba.weatherapp.utils.WeatherUtil;
 import soba.weatherapp.utils.views.WeatherDetailLayout;
 
@@ -25,11 +25,11 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.ViewHold
     private static int DETAILVIEW = 1;
     private Context mContext;
     private WeatherData mWeatherData = new WeatherData();
-    private SharedPreferenceManager prefs;
+    private PrefsManager prefs;
 
     public WeatherAdapter(Context context) {
         mContext = context;
-        prefs = SharedPreferenceManager.from(mContext);
+        prefs = PrefsManager.from(mContext);
     }
 
     @Override

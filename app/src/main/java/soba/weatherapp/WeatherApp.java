@@ -19,8 +19,7 @@ public class WeatherApp extends Application {
 
         initDagger();
         mContext = this;
-        //ApiClient.init();
-        //        LeakCanary.install(this);
+        // LeakCanary.install(this);
     }
 
     private void initDagger() {

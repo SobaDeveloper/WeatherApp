@@ -7,17 +7,17 @@ import android.preference.PreferenceManager;
 /**
  * Created by SobaDeveloper on 6/5/16.
  */
-public class SharedPreferenceManager {
+public class PrefsManager {
 
-    private final static String TAG = SharedPreferenceManager.class.getSimpleName();
+    private final static String TAG = PrefsManager.class.getSimpleName();
     private SharedPreferences prefs;
 
-    private SharedPreferenceManager(Context context) {
+    private PrefsManager(Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    public static SharedPreferenceManager from(Context context) {
-        return new SharedPreferenceManager(context);
+    public static PrefsManager from(Context context) {
+        return new PrefsManager(context);
     }
 
     public void registerChangeListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {

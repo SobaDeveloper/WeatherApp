@@ -13,7 +13,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import soba.weatherapp.utils.SharedPreferenceManager;
+import soba.weatherapp.utils.PrefsManager;
 
 /**
  * Created by SobaDeveloper on 6/4/16.
@@ -24,12 +24,12 @@ public abstract class PermissionsActivity extends AppCompatActivity {
     protected static final int REQUEST_PERMISSIONS = 1;
     protected static List<String> permissionList;
     private static String[] PERMISSIONS_STRINGS;
-    protected SharedPreferenceManager prefs;
+    protected PrefsManager prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefs = SharedPreferenceManager.from(this);
+        prefs = PrefsManager.from(this);
         addPermissions();
         initPermissionsIfNecessary();
     }
