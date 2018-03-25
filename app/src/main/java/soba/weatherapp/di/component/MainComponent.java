@@ -7,6 +7,7 @@ import soba.weatherapp.di.module.NetworkModule;
 import soba.weatherapp.di.module.RepositoryModule;
 import soba.weatherapp.di.module.ServiceModule;
 import soba.weatherapp.presentation.view.main.MainActivity;
+import soba.weatherapp.presentation.view.settings.SettingsActivity;
 
 /**
  * Created by Levi on 3/23/18.
@@ -17,4 +18,6 @@ import soba.weatherapp.presentation.view.main.MainActivity;
 }) public interface MainComponent {
 
     void inject(MainActivity mainActivity);
+
+    void inject(SettingsActivity settingsActivity);
 }

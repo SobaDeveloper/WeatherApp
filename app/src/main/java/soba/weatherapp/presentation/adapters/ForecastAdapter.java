@@ -10,7 +10,7 @@ import android.widget.TextView;
 import soba.weatherapp.R;
 import soba.weatherapp.domain.models.forecastmodel.ForecastData;
 import soba.weatherapp.domain.models.forecastmodel.List;
-import soba.weatherapp.utils.SharedPreferenceManager;
+import soba.weatherapp.utils.PrefsManager;
 import soba.weatherapp.utils.WeatherUtil;
 
 /**
@@ -20,11 +20,11 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
 
     private Context mContext;
     private ForecastData mForecastData = new ForecastData();
-    private SharedPreferenceManager prefs;
+    private PrefsManager prefs;
 
     public ForecastAdapter(Context context) {
         mContext = context;
-        prefs = SharedPreferenceManager.from(mContext);
+        prefs = PrefsManager.from(mContext);
     }
 
     @Override

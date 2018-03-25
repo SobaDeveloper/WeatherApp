@@ -5,22 +5,31 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import soba.weatherapp.R;
+import soba.weatherapp.WeatherApp;
 
 /**
  * Created by SobaDeveloper on 5/26/16.
- *
  */
 public class SettingsActivity extends AppCompatActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @BindView(R.id.toolbar) Toolbar toolbar;
+
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        getFragmentManager().beginTransaction()
-                .replace(R.id.container, new SettingsFragment()).commit();
+        ((WeatherApp) getApplication()).getMainComponent().inject(this);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        initUi();
+    }
+
+    private void initUi() {
+        getFragmentManager().beginTransaction()
+            .replace(R.id.container, new SettingsFragment())
+            .commit();
         setSupportActionBar(toolbar);
 
         final ActionBar ab = getSupportActionBar();
@@ -31,8 +40,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
         }
