@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '26.0.3'
 
     defaultConfig {
         applicationId "soba.materialweather"
@@ -29,7 +29,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
     // Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     // Android Support Libraries
     implementation supportLibrary.appcompat
@@ -60,7 +60,7 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:$rootProject.okHttp3Version"
     implementation retrofit.retrofit
     implementation retrofit.gsonConverter
-    implementation retrofit.rxjava2Adapter
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.8.1"
 
     // Reactive
     implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjava2Version"
